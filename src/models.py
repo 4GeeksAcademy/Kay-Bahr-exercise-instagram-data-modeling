@@ -7,6 +7,22 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
+class Follower(Base):
+    __tablename__ = 'follower'
+
+class User(Base):
+    __tablename__ = 'user'
+
+class Post(Base):
+    __tablename__ = 'post'
+
+class Comment(Base):
+    __tablename__ = 'comment'
+
+class Media(Base):
+    __tablename__ = 'media'
+    
+
 class Person(Base):
     __tablename__ = 'person'
     # Here we define columns for the table person
