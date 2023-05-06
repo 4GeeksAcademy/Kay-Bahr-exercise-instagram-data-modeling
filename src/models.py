@@ -10,39 +10,66 @@ Base = declarative_base()
 class Follower(Base):
     __tablename__ = 'follower'
 
+    id = Column(Integer, primary_key=True)
+    followed_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user = relationship('user', uselist=False, back_populates='follower')
+
+    def serialize(follower):
+        return {
+            "follower id": follower.id,
+            "followed id": follower.followed_id
+        }
+
 class User(Base):
     __tablename__ = 'user'
+    
+    id = Column(Integer, primary_key=True)
+    username = Column(String(250), nullable=False)
+    first_name = Column(String(250), nullable=False)
+    last_name = Column(String(250), nullable=False)
+    email = Column(String(250), nullable=False)
+    post = relationship('post', uselist=False, back_populates='user')
+
+    def serialize(user):
+        return {
+            "id": user.id,
+            "username": user.username,
+            "first name": user.first_name,
+            "last name": user.last_name,
+            "email": user.email
+        }
 
 class Post(Base):
     __tablename__ = 'post'
+    
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    text = Column(String(250))
+    comment = relationship('comment', uselist=False, back_populates='post')
+
+    def serialize(post):
+        return {
+            "id": post.id,
+            "user id": post.user_id,
+            "text": post.text
+        }
 
 class Comment(Base):
     __tablename__ = 'comment'
-
-class Media(Base):
-    __tablename__ = 'media'
     
-
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    author_id = Column(Integer)
+    post_id = Column(Integer, ForeignKey('post.id'))
+    text = Column(String(250), nullable=False)
+    post = relationship('post', uselist=False, back_populates='comment')
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
-
-    def to_dict(self):
-        return {}
+    def serialize(comment):
+        return {
+            "id": comment.id,
+            "author id": comment.author_id,
+            "post id": comment.post_id,
+            "text": comment.text
+        }
 
 ## Draw from SQLAlchemy base
 try:
